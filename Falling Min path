@@ -1,0 +1,101 @@
+Memiozation Tc o(n*n)
+Sc o(n+n)
+Tabulation
+Sc o(n);
+Space optimization
+Sc o(1)
+#include<bits/stdc++.h>
+class Solution {
+public:
+    int Solve(int i,int j,vector<vector<int>>& matrix,vector<vector<int>>& dp){
+        int n=matrix.size();
+        if(j<0 || j>=n){
+            return 1e8;
+        }
+        if(i==0){
+            return matrix[i][j];
+        }
+        if(dp[i][j]!=-1){
+            return dp[i][j];
+        }
+        int u=matrix[i][j] + Solve(i-1,j,matrix,dp);
+        int ld = matrix[i][j] + Solve(i-1,j-1,matrix,dp);
+        int rd = matrix[i][j] + Solve(i-1,j+1,matrix,dp);
+        dp[i][j] = min(u,min(ld,rd));
+        return dp[i][j];
+    
+    }
+    int tabulation(vector<vector<int>>& matrix,vector<vector<int>>& dp){
+        for(int i=0;i<matrix.size();i++){
+            dp[0][i] = matrix[0][i];
+        }
+        for(int i=1;i<matrix.size();i++){
+            for(int j=0;j<matrix.size();j++){
+                int up = matrix[i][j] + dp[i-1][j];
+                int ld = matrix[i][j];
+                if(j-1>=0){
+                   ld = ld + dp[i-1][j-1];
+                }
+                else{
+                    ld = ld + 1e8;
+                }
+                int rd = matrix[i][j];
+                if(j+1<matrix.size()){
+                    rd = rd + dp[i-1][j+1];
+                }
+                else{
+                    rd =rd + 1e8;
+                }
+                dp[i][j] = min(up,min(ld,rd));
+            }
+        }
+        int  mini=dp[matrix.size()-1][0];
+        for(int  i=1;i<matrix.size();i++){
+           mini=min(mini,dp[matrix.size()-1][i]); 
+        }
+        return mini;
+    }
+    int optimization(vector<vector<int>>& matrix){
+        vector<int> prev(matrix.size(),0),cur(matrix.size(),0);
+        for(int i=0;i<matrix.size();i++){
+            prev[i] = matrix[0][i];
+        }
+         for(int i=1;i<matrix.size();i++){
+            for(int j=0;j<matrix.size();j++){
+                int up = matrix[i][j] + prev[j];
+                int ld = matrix[i][j];
+                if(j-1>=0){
+                   ld = ld + prev[j-1];
+                }
+                else{
+                    ld = ld + 1e8;
+                }
+                int rd = matrix[i][j];
+                if(j+1<matrix.size()){
+                    rd = rd + prev[j+1];
+                }
+                else{
+                    rd =rd + 1e8;
+                }
+                cur[j] = min(up,min(ld,rd));
+            }
+             prev = cur;
+        }
+        int mini = prev[0];
+        for(int i=1;i<matrix.size();i++){
+            mini=min(mini,prev[i]);
+        }
+        return mini;
+    }
+    int minFallingPathSum(vector<vector<int>>& matrix) {
+       int n =matrix.size();
+       vector<vector<int>> dp(n,vector<int>(n,-1));
+      /*  int mini=1e8;
+        for(int i=0;i<n;i++){
+          mini=min(mini,Solve(n-1,i,matrix,dp));  
+        }
+        return mini;   */
+      //  return tabulation(matrix,dp);
+        return optimization(matrix);
+    }
+};
