@@ -1,0 +1,41 @@
+ bool solve(int index,int arr[],int target,vector<vector<int>> &dp){
+        if(target==0){
+            return true;
+        }
+        if(index==0){
+          return arr[index]==target;
+        }
+        if(dp[index][target]!=-1){
+            return dp[index][target];
+        }
+        bool taken=false;
+        if(arr[index]<=target){
+            taken=solve(index-1,arr,target-arr[index],dp);
+        }
+        bool nottaken = solve(index-1,arr,target,dp);
+        dp[index][target] = taken||nottaken;
+        return dp[index][target];
+    }
+    int equalPartition(int N, int arr[])
+    {
+        // code here
+        
+        int totalSum=0;
+        for(int i=0;i<N;i++){
+           totalSum+=arr[i];
+        }
+        int target=totalSum/2;
+        if(totalSum%2!=0){
+            return 0;
+        }
+        else{
+            int target=totalSum/2;
+            vector<vector<int>> dp(N,vector<int>(target+1,-1));
+            bool ans=solve(N-1,arr,target,dp);
+            if(ans==true){
+                return 1;
+            }
+            return 0;
+        }
+    }
+};
