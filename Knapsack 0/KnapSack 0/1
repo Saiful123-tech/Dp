@@ -1,0 +1,70 @@
+Recursion Approach
+Tc 2^n
+SC o(n)
+Memoization
+Tc o(n*w)
+SC o(n*w) + o(n)
+int helper(int W,int wt[],int val[],int index,vector<vector<int>> &dp){
+        if(index==0){
+            if(wt[0]<=W){
+                return val[0];
+        }
+        else{
+            return 0;
+        }
+        }
+        if(dp[index][W]!=-1){
+          return dp[index][W];  
+        }
+        int notpick= 0 + helper(W,wt,val,index-1,dp);
+        int pick = INT_MIN;
+        if(wt[index]<=W){
+            pick=val[index] + helper(W-wt[index],wt,val,index-1,dp);
+        }
+    dp[index][W] = max(pick,notpick);
+    return dp[index][W];
+    }
+    Tabulation
+    TC o(n*w)
+    SC o(n*W)
+      int knapSack(int W, int wt[], int val[], int n) 
+    { 
+       // Your code here
+         vector<vector<int>> dp(n,vector<int>(W+1,0));
+     //  return helper(W,wt,val,n-1,dp);
+     for(int k=wt[0];k<=W;k++){
+         dp[0][k] = val[0];
+     }
+     for(int i=1;i<n;i++){
+         for(int j=0;j<=W;j++){
+             int notpick = 0 + dp[i-1][j];
+             int pick = INT_MIN;
+             if(wt[i]<=j){
+                 pick = val[i] + dp[i-1][j-wt[i]];
+             }
+             dp[i][j] = max(notpick,pick);
+         }
+     }
+     return dp[n-1][W];
+    }
+    Space Optimization
+    TC o(n*w)
+    SC o(W)
+    int optimization(int W,int wt[],int val[],int n){
+        vector<int> prev(W+1,0),cur(W+1,0);
+        for(int k=wt[0];k<=W;k++){
+            prev[k]=val[0];
+        }    
+        for(int i=1;i<n;i++){
+            for(int j=0;j<=W;j++){
+                int notpick= 0 + prev[j];
+                int pick=INT_MIN;
+                if(wt[i]<=j){
+                    pick = val[i] + prev[j-wt[i]];
+                }
+    cur[j] = max(notpick,pick);
+            }
+            prev=cur;
+        }
+        return prev[W];
+    }
