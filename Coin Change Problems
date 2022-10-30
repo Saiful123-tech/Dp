@@ -1,60 +1,82 @@
 class Solution{
 
 	public:
-	int solve(int coins[],int M,int V,vector<int> &dp){
-	    if(V==0){
-	        return 0;
-	    }
-	    if(V<0){
-	        return INT_MAX;
-	    }
-	    int mini = INT_MAX;
-	    if(dp[V]!=INT_MAX){
-	        return dp[V];
-	    }
-	    for(int i=0;i<M;i++){
-	        int ans = solve(coins,M,V-coins[i],dp);
-	        if(ans!=INT_MAX){
-	            mini = min(mini,ans+1);
+	int helper(int coins[],int index,int target,vector<vector<int>> &dp){
+	    if(index==0){
+	        if(target%coins[index]==0){
+	            return target/coins[index];
+	        }
+	        else{
+	            return 1e9;
 	        }
 	    }
-	    dp[V]=mini;
-	    return mini;
+	    if(dp[index][target]!=-1){
+	        return dp[index][target];
+	    }
+	    int nottake = 0 + helper(coins,index-1,target,dp);
+	    int take = INT_MAX;
+	    if(coins[index]<=target){
+	        take = 1 + helper(coins,index,target-coins[index],dp);
+	    }
+	   dp[index][target] = min(nottake,take);
+	}
+	int optimization(int coins[], int M, int V){
+	    vector<int> prev(V+1,0),cur(V+1,0);
+	    for(int target=0;target<=V;target++){
+	        if(target%coins[0]==0){
+	            prev[target] = target / coins[0];
+	        }
+	        else{
+	            prev[target] = 1e9;
+	        }
+	    }
+	    for(int i=1;i<M;i++){
+	        for(int target=0;target<=V;target++){
+	            int nottake = 0 + prev[target];
+	            int take = 1e9;
+	            if(coins[i]<=target){
+	                take = 1 + prev[target-coins[i]];
+	            }
+	            cur[target] = min(nottake,take);
+	        }
+	        prev=cur;
+	    }
+	    int ans=prev[V];
+	    if(ans>=1e9){
+	        return -1;
+	    }
+	    return ans;
 	}
 	int minCoins(int coins[], int M, int V) 
 	{ 
+//	 return optimization(coins,M,V);
 	    // Your code goes here
-	    vector<int> dp(M+1,-1);
-	    int ans=solve(coins,M,V,dp);
-	    if(ans!=INT_MAX){
-	        return ans;
-	    }
-	    return -1;
+	 //   vector<vector<int>> dp(M,vector<int>(V+1,-1));
+	  vector<vector<int>> dp(M,vector<int>(V+1,0));
+	 //  int ans =  helper(coins,M-1,V,dp);
+	 for(int t=0;t<=V;t++){
+	     if(t%coins[0]==0){
+	         dp[0][t] = t/coins[0];
+	     }
+	     else{
+	         dp[0][t] = 1e9;
+	     }
+	 }
+	 for(int i=1;i<M;i++){
+	     for(int target=0;target<=V;target++){
+	         int nottake = 0  + dp[i-1][target];
+	         int take = 1e9;
+	         if(coins[i]<=target){
+	             take = 1 + dp[i][target-coins[i]];
+	         }
+	         dp[i][target] = min(nottake,take);
+	     }
+	 } 
+	 int ans = dp[M-1][V];   
+	   if(ans>=1e9){
+	       return -1;
+	   }
+	   return ans;
 	} 
 	  
 };
-
-// { Driver Code Starts.
-int main() 
-{
-   
-   
-   	int t;
-    cin >> t;
-    while (t--)
-    {
-        int v, m;
-        cin >> v >> m;
-
-        int coins[m];
-        for(int i = 0; i < m; i++)
-        	cin >> coins[i];
-
-      
-	    Solution ob;
-	    cout << ob.minCoins(coins, m, v) << "\n";
-	     
-    }
-    return 0;
-}
-  // } Driver Code Ends
