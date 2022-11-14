@@ -1,0 +1,23 @@
+  public:
+  long long int helper(int coins[],int index,int sum,vector<vector<long long int>> &dp){
+      if(index==0){
+          return (sum%coins[index]==0);
+      }
+      if(dp[index][sum]!=-1){
+          return dp[index][sum];
+      }
+     long long int notpick = helper(coins,index-1,sum,dp);
+     long long int pick = 0;
+      if(coins[index]<=sum){
+          pick = helper(coins,index,sum-coins[index],dp);
+      }
+      dp[index][sum] = notpick +  pick ;
+      return dp[index][sum];
+  }
+    long long int count(int coins[], int N, int sum) {
+
+        // code here.
+        vector<vector<long long int>> dp(N,vector<long long int>(sum+1,-1));
+        return helper(coins,N-1,sum,dp);
+    }
+};
