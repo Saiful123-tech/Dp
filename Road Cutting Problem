@@ -1,0 +1,71 @@
+//{ Driver Code Starts
+// Initial Template for C++
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+// User function Template for C++
+TC o(n*n)
+SC o(n*n) + o(n+1)
+class Solution{
+  public:
+  int helper(int price[],int index,int n,vector<vector<int>> & dp){
+      if(index==0){
+          return price[0]*n;
+      }
+      if(dp[index][n]!=-1){
+          
+          return dp[index][n];
+      }
+      int notpick =  0 + helper(price,index-1,n,dp);
+      int pick = INT_MIN;
+      int roadLength = index+1;
+      if(roadLength<=n){
+      pick = price[index] + helper(price,index,n-roadLength,dp);
+      }
+      dp[index][n] = max(notpick,pick);
+      return dp[index][n];
+  }
+    int cutRod(int price[], int n) {
+        //code here
+         vector<vector<int>> dp(n,vector<int>(n+1,-1));
+       // return helper(price,n-1,n,dp);
+       for(int i=0;i<=n;i++){
+           dp[0][i] = price[0]*i;
+       }
+       for(int i=1;i<n;i++){
+           for(int j=0;j<=n;j++){
+               int notpick = 0 + dp[i-1][j];
+               int pick = INT_MIN;
+               int roadLength = i + 1;
+               if(roadLength<=j){
+                 pick = price[i] + dp[i][j-roadLength];  
+               }
+               dp[i][j] = max(notpick,pick);
+           }
+       }
+       return dp[n-1][n];
+    }
+};
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        int n;
+        cin >> n;
+        int a[n];
+        for (int i = 0; i < n; i++) 
+            cin >> a[i];
+            
+        Solution ob;
+
+        cout << ob.cutRod(a, n) << endl;
+    }
+    return 0;
+}
+// } Driver Code Ends
