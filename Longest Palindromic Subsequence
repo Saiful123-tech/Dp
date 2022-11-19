@@ -1,0 +1,87 @@
+//{ Driver Code Starts
+//Initial template for C++
+
+#include<bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+//User function Template for C++
+#include<bits/stdc++.h>
+class Solution{
+  public:
+   int helper(int i,int j,string &text1,string &text2,vector<vector<int>> & dp){
+        if(i<0 || j<0){
+            return 0;
+        }
+        if(dp[i][j]!=-1){
+            return dp[i][j];
+        }
+        if(text1[i]==text2[j]){
+        return 1  + helper(i-1,j-1,text1,text2,dp);    
+        }
+        dp[i][j] = max(helper(i-1,j,text1,text2,dp),helper(i,j-1,text1,text2,dp));
+    
+        return dp[i][j];
+    }
+     int lcs(string text1, string text2) {
+        int x=text1.size();
+        int y=text2.size();
+         vector<vector<int>> dp(x+1,vector<int>(y+1,0));
+       // return helper(x-1,y-1,text1,text2,dp);
+        for(int i=0;i<=y;i++){
+            dp[0][i] = 0;
+        }
+        for(int j=0;j<=x;j++){
+            dp[j][0] = 0;
+        }
+        for(int i=1;i<=x;i++){
+            for(int j=1;j<=y;j++){
+              if(text1[i-1]==text2[j-1]){
+             dp[i][j] = 1  + dp[i-1][j-1];   
+           } 
+                else{
+        dp[i][j] = max(dp[i-1][j],dp[i][j-1]);
+                }
+            }
+        }
+        return dp[x][y];
+    }
+    void reverseStr(string& str)
+{
+    int len = str.length();
+    int n = len-1;
+    int i = 0;
+    while(i<=n){
+        //Using the swap method to switch values at each index
+        swap(str[i],str[n]);
+        n = n-1;
+        i = i+1;
+  }
+ 
+}
+    int longestPalinSubseq(string A) {
+        //code here
+        string B=A;
+        reverseStr(B);
+        vector<vector<int>> dp(A.size(),vector<int>(A.size(),-1));
+        return helper(A.size()-1,A.size()-1,A,B,dp);
+    //  return lcs(A,B);
+    }
+};
+
+//{ Driver Code Starts.
+
+int32_t main()
+{
+    int t; cin >> t;
+    while (t--)
+    {
+        string s; cin >> s;
+        Solution ob;
+        cout << ob.longestPalinSubseq(s) << endl;
+    }
+}
+// Contributed By: Pranay Bansal
+
+// } Driver Code Ends
