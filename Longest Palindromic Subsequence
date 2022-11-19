@@ -3,7 +3,8 @@
 
 #include<bits/stdc++.h>
 using namespace std;
-
+TC o(S*S)
+SC o (S*S)
 
 // } Driver Code Ends
 //User function Template for C++
